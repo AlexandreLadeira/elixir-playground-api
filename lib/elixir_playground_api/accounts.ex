@@ -53,8 +53,8 @@ defmodule ElixirPlaygroundApi.Accounts do
 
   def get_account_by_email(email) do
     Account
-      |> where(email: ^email)
-      |> Repo.one()
+    |> where(email: ^email)
+    |> Repo.one()
   end
 
   @doc """

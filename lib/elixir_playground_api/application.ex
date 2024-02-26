@@ -10,7 +10,8 @@ defmodule ElixirPlaygroundApi.Application do
     children = [
       ElixirPlaygroundApiWeb.Telemetry,
       ElixirPlaygroundApi.Repo,
-      {DNSCluster, query: Application.get_env(:elixir_playground_api, :dns_cluster_query) || :ignore},
+      {DNSCluster,
+       query: Application.get_env(:elixir_playground_api, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: ElixirPlaygroundApi.PubSub},
       # Start a worker by calling: ElixirPlaygroundApi.Worker.start_link(arg)
       # {ElixirPlaygroundApi.Worker, arg},

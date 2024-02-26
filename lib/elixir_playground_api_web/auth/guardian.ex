@@ -11,7 +11,7 @@ defmodule ElixirPlaygroundApiWeb.Auth.Guardian do
     {:error, :no_id_provided}
   end
 
-  def resource_from_claims(%{"sub"=> id}) do
+  def resource_from_claims(%{"sub" => id}) do
     case Accounts.get_account!(id) do
       nil -> {:error, :not_found}
       resource -> {:ok, resource}
@@ -24,13 +24,14 @@ defmodule ElixirPlaygroundApiWeb.Auth.Guardian do
 
   def authenticate(email, password) do
     case Accounts.get_account_by_email(email) do
-      nil -> {:error, :unauthorized}
+      nil ->
+        {:error, :unauthorized}
+
       account ->
         case validate_password(password, account.hash_password) do
           true -> create_token(account)
           false -> {:error, :unauthorized}
         end
-
     end
   end
 
