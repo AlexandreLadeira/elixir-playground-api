@@ -3,7 +3,7 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
 
   alias ElixirPlaygroundApi.{Accounts, Accounts.Account, Users, Users.User}
   alias ElixirPlaygroundApi.Accounts.Account
-  alias ElixirPlaygroundApiWeb.Auth.Guardian
+  alias ElixirPlaygroundApiWeb.Auth.{Guardian, ErrorResponse}
 
   action_fallback ElixirPlaygroundApiWeb.FallbackController
 
@@ -19,6 +19,18 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
       conn
       |> put_status(:created)
       |> render(:account_token, %{account: account, token: token})
+    end
+  end
+
+  def sign_in(conn, %{"email" => email, "hash_password" => hash_password}) do
+    case Guardian.authenticate(email, hash_password) do
+      {:ok, account, token} ->
+        conn
+        |> put_status(:ok)
+        |> render(:account_token, %{account: account, token: token})
+
+      {:error, :unauthorized} ->
+        raise ErrorResponse.Unauthorized, message: "Incorret email or password."
     end
   end
 
