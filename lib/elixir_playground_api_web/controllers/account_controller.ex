@@ -1,8 +1,9 @@
 defmodule ElixirPlaygroundApiWeb.AccountController do
   use ElixirPlaygroundApiWeb, :controller
 
-  alias ElixirPlaygroundApi.Accounts
+  alias ElixirPlaygroundApi.{Accounts, Accounts.Account, Users, Users.User}
   alias ElixirPlaygroundApi.Accounts.Account
+  alias ElixirPlaygroundApiWeb.Auth.Guardian
 
   action_fallback ElixirPlaygroundApiWeb.FallbackController
 
@@ -12,10 +13,12 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
   end
 
   def create(conn, %{"account" => account_params}) do
-    with {:ok, %Account{} = account} <- Accounts.create_account(account_params) do
+    with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(account),
+         {:ok, %User{} = _user} <- Users.create_user(account, account_params) do
       conn
       |> put_status(:created)
-      |> render(:show, account: account)
+      |> render(:account_token, %{account: account, token: token})
     end
   end
 

@@ -15,11 +15,20 @@ defmodule ElixirPlaygroundApiWeb.AccountJSON do
     %{data: data(account)}
   end
 
-  defp data(%Account{} = account) do
+  def account_token(%{account: account, token: token}) do
     %{
       id: account.id,
       email: account.email,
-      hash_password: account.hash_password
+      token: token
+    }
+  end
+
+  defp data(%Account{} = account) do
+    %{
+      id: account.id,
+      email: account.email
+      # No need to show the has_passowrd
+      # hash_password: account.hash_password
     }
   end
 end
