@@ -1,5 +1,9 @@
 # ElixirPlaygroundApi
 
+Simple API built step by step to practice the main features of elixir.
+
+[Tutorial used as a basis](https://www.youtube.com/playlist?list=PL2Rv8vpZJz4zM3Go3X-dda478p-6xrmEl)
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
@@ -16,3 +20,4 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+

@@ -5,6 +5,8 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
   alias ElixirPlaygroundApi.Accounts.Account
   alias ElixirPlaygroundApiWeb.Auth.{Guardian, ErrorResponse}
 
+  plug :is_authorized_account when action in [:update, :delete]
+
   action_fallback ElixirPlaygroundApiWeb.FallbackController
 
   def index(conn, _params) do
@@ -35,6 +37,18 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
     end
   end
 
+  defp is_authorized_account(conn, _opts) do
+    %{params: %{"account" => account_params}} = conn
+    account = Accounts.get_account!(account_params["id"])
+
+    if(conn.assigns.account.id == account.id) do
+      conn
+    else
+      raise ErrorResponse.Forbidden
+    end
+  end
+
+  @spec show(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def show(conn, %{"id" => id}) do
     account = Accounts.get_account!(id)
     render(conn, :show, account: account)
@@ -44,8 +58,8 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
     render(conn, :show, account: conn.assigns.account)
   end
 
-  def update(conn, %{"id" => id, "account" => account_params}) do
-    account = Accounts.get_account!(id)
+  def update(conn, %{"account" => account_params}) do
+    account = Accounts.get_account!(account_params["id"])
 
     with {:ok, %Account{} = account} <- Accounts.update_account(account, account_params) do
       render(conn, :show, account: account)

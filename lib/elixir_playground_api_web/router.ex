@@ -31,5 +31,6 @@ defmodule ElixirPlaygroundApiWeb.Router do
     pipe_through [:api, :auth]
     get "/accounts/:id", AccountController, :show
     get "/logged_account/", AccountController, :show_from_session
+    put "/accounts", AccountController, :update
   end
 end
