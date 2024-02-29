@@ -12,10 +12,12 @@ defmodule ElixirPlaygroundApiWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   pipeline :auth do
     plug ElixirPlaygroundApiWeb.Auth.Pipeline
+    plug ElixirPlaygroundApiWeb.Auth.SetAccount
   end
 
   scope "/api", ElixirPlaygroundApiWeb do
@@ -28,5 +30,6 @@ defmodule ElixirPlaygroundApiWeb.Router do
   scope "/api", ElixirPlaygroundApiWeb do
     pipe_through [:api, :auth]
     get "/accounts/:id", AccountController, :show
+    get "/logged_account/", AccountController, :show_from_session
   end
 end
