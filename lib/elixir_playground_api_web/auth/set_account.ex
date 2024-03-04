@@ -14,7 +14,7 @@ defmodule ElixirPlaygroundApiWeb.Auth.SetAccount do
 
       if account_id == nil, do: raise(ErrorResponse.Unauthorized, "User is not signed in")
 
-      account = Accounts.get_account!(account_id)
+      account = Accounts.get_full_account(account_id)
 
       cond do
         account_id && account -> assign(conn, :account, account)

@@ -5,7 +5,9 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
   alias ElixirPlaygroundApi.Accounts.Account
   alias ElixirPlaygroundApiWeb.Auth.{Guardian, ErrorResponse}
 
-  plug :is_authorized_account when action in [:update, :delete]
+  import ElixirPlaygroundApiWeb.Auth.AuthorizedPlug
+
+  plug :is_authorized when action in [:update, :delete]
 
   action_fallback ElixirPlaygroundApiWeb.FallbackController
 
@@ -57,17 +59,6 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
     |> Plug.Conn.clear_session()
     |> put_status(:ok)
     |> render(:account_token, %{account: account, token: nil})
-  end
-
-  defp is_authorized_account(conn, _opts) do
-    %{params: %{"account" => account_params}} = conn
-    account = Accounts.get_account!(account_params["id"])
-
-    if(conn.assigns.account.id == account.id) do
-      conn
-    else
-      raise ErrorResponse.Forbidden
-    end
   end
 
   @spec show(Plug.Conn.t(), map()) :: Plug.Conn.t()

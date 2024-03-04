@@ -34,5 +34,6 @@ defmodule ElixirPlaygroundApiWeb.Router do
     put "/accounts", AccountController, :update
     post "/accounts/sign_out", AccountController, :sign_out
     post "/accounts/refresh_session", AccountController, :refresh_session
+    put "/users", UserController, :update
   end
 end
