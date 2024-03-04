@@ -37,6 +37,16 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
     end
   end
 
+  def sign_out(conn, %{}) do
+    account = conn.assigns[:account]
+    token = Guardian.Plug.current_token(conn)
+    Guardian.revoke(token)
+    conn
+    |> Plug.Conn.clear_session()
+    |> put_status(:ok)
+    |> render(:account_token, %{account: account, token: nil})
+  end
+
   defp is_authorized_account(conn, _opts) do
     %{params: %{"account" => account_params}} = conn
     account = Accounts.get_account!(account_params["id"])
