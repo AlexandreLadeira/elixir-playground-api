@@ -37,10 +37,21 @@ defmodule ElixirPlaygroundApiWeb.AccountController do
     end
   end
 
+  def refresh_session(conn, %{}) do
+    token = Guardian.Plug.current_token(conn)
+    {:ok, account, new_token} = Guardian.authenticate(token)
+
+    conn
+    |> Plug.Conn.put_session(:account_id, account.id)
+    |> put_status(:ok)
+    |> render(:account_token, %{account: account, token: new_token})
+  end
+
   def sign_out(conn, %{}) do
     account = conn.assigns[:account]
     token = Guardian.Plug.current_token(conn)
     Guardian.revoke(token)
+
     conn
     |> Plug.Conn.clear_session()
     |> put_status(:ok)

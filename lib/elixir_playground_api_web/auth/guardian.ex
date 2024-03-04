@@ -35,6 +35,14 @@ defmodule ElixirPlaygroundApiWeb.Auth.Guardian do
     end
   end
 
+  def authenticate(token) do
+    with {:ok, claims} <- decode_and_verify(token),
+         {:ok, account} <- resource_from_claims(claims),
+         {:ok, _old, {new_token, _claims}} <- refresh(token) do
+      {:ok, account, new_token}
+    end
+  end
+
   defp validate_password(password, hash_password) do
     Bcrypt.verify_pass(password, hash_password)
   end
@@ -53,6 +61,12 @@ defmodule ElixirPlaygroundApiWeb.Auth.Guardian do
   def on_verify(claims, token, _options) do
     with {:ok, _} <- Guardian.DB.on_verify(claims, token) do
       {:ok, claims}
+    end
+  end
+
+  def on_refresh({old_token, old_claims}, {new_token, new_claims}, _options) do
+    with {:ok, _, _} <- Guardian.DB.on_refresh({old_token, old_claims}, {new_token, new_claims}) do
+      {:ok, {old_token, old_claims}, {new_token, new_claims}}
     end
   end
 
